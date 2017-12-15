@@ -55,8 +55,15 @@ public class AccountProvider extends ContentProvider {
             Cursor cursor = db.query("info", projection, selection, selectionArgs, null, null, sortOrder);
             //db.close(); //关闭数据库会报错
             //※ 注意：这个cursor 不能关闭
+
+            //发送一条消息，说明数据库被操作了
+            getContext().getContentResolver().notifyChange(uri, null);
+
             return cursor;
         }else { //说明路径不匹配
+
+
+
             //return null;
             throw new IllegalArgumentException("哥们：uri路径不匹配，请检查路径");
         }
@@ -79,6 +86,11 @@ public class AccountProvider extends ContentProvider {
             Uri uri2 = Uri.parse("com.sty.insert/" + insert);
             db.close(); //关闭数据库
 
+            if(insert > 0) {
+                //发送一条消息，说明数据库被操作了
+                getContext().getContentResolver().notifyChange(uri, null);
+            }
+
             return uri2;
 
         }else{
@@ -96,6 +108,11 @@ public class AccountProvider extends ContentProvider {
             //代表影响的行数
             int delete = db.delete("info", selection, selectionArgs);
 
+            if(delete > 0){
+                //发送一条消息，说明数据库被操作了
+                getContext().getContentResolver().notifyChange(uri, null);
+            }
+
             return delete;
         }
         return 0;
@@ -109,6 +126,11 @@ public class AccountProvider extends ContentProvider {
 
             //代表影响的行数
             int update = db.update("info", values, selection, selectionArgs);
+
+            if(update > 0){
+                //发送一条消息，说明数据库被操作了
+                getContext().getContentResolver().notifyChange(uri, null);
+            }
 
             return update;
         }else{
